@@ -1,4 +1,4 @@
-package framework;
+package flow.transformers;
 
 /**
  * Interface defining the <code>transform</code> operation.
