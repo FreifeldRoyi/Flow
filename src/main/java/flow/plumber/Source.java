@@ -11,7 +11,7 @@ public abstract class Source extends DecoratedFlowObject
 		super();
 	}
 
-	public Source(String name, FlowObject next)
+	public Source(FlowObject next)
 	{
 		super(next);
 	}

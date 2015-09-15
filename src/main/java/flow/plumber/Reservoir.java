@@ -11,7 +11,7 @@ public abstract class Reservoir extends DecoratedFlowObject
 		super();
 	}
 
-	public Reservoir(String name, FlowObject next)
+	public Reservoir(FlowObject next)
 	{
 		super(next);
 	}
