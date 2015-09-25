@@ -8,7 +8,12 @@ public abstract class Sink implements FlowObject
 {
 	private final String name;
 
-	protected Sink(String name)
+	public Sink()
+	{
+		this("*");
+	}
+
+	public Sink(String name)
 	{
 		this.name = name;
 	}

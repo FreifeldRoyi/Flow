@@ -1,43 +1,57 @@
 package flow.plumber;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 /**
  * @author Freifeld Royi
  * @since 12-Sep-15.
  */
-public class Flow<T>
+public class Flow<T> implements AutoCloseable
 {
 	private final Source source;
-	private final List<Reservoir> reservoirs;
+	private final List<DecoratedFlowObject> pipes;
 	private final MultiSink sinks;
-	private final List<Predicate<T>> filters;
-	private final Class<T> inputClass;
 
-	private Flow(Source source, List<Reservoir> reservoirs, MultiSink multiSink,
-			List<Predicate<T>> filters, Class<T> inputClass)
+	private Flow(Source source, List<DecoratedFlowObject> pipes, MultiSink multiSink)
 	{
 		this.source = source;
-		this.reservoirs = reservoirs;
+		this.pipes = pipes;
 		this.sinks = multiSink;
-		this.filters = filters;
-		this.inputClass = inputClass;
+	}
+
+	public void start()
+	{
+		this.sinks.start();
+		this.pipes.forEach(DecoratedFlowObject::start);
+		this.source.start();
+	}
+
+	@Override
+	public void close()
+	{
+		this.source.close();
+		this.pipes.forEach(DecoratedFlowObject::close);
+		this.sinks.close();
 	}
 
 	public static class Plumber<E>
 	{
 		private Source source;
 		private List<Sink> sinks;
-		private List<Reservoir> reservoirs; // TODO the generics can cause a problem here...
-		private List<Predicate<E>> filters;
+		private List<DecoratedFlowObject> pipes;
 
 		public Plumber()
 		{
-			this.source = null;
-			this.sinks = null;
-			this.reservoirs = null;
+			this.init(null, null);
+		}
+
+		public Plumber(Source source, Sink... sinks)
+		{
+			List<Sink> sinkList = Arrays.asList(sinks);
+			this.init(source, sinkList);
 		}
 
 		public Plumber<E> from(Source source)
@@ -48,23 +62,13 @@ public class Flow<T>
 
 		public Plumber<E> to(Sink output)
 		{
-			if (this.sinks == null)
-			{
-				this.sinks = new ArrayList<>();
-			}
 			this.sinks.add(output);
-
 			return this;
 		}
 
-		public Plumber<E> reservoir(Reservoir reservoir)
+		public Plumber<E> pipe(DecoratedFlowObject pipe)
 		{
-			if (this.reservoirs == null)
-			{
-				this.reservoirs = new ArrayList<>();
-			}
-			this.reservoirs.add(reservoir);
-
+			this.pipes.add(pipe);
 			return this;
 		}
 
@@ -80,30 +84,27 @@ public class Flow<T>
 			}
 
 			MultiSink multiSink = new MultiSink(this.sinks);
-			if (this.reservoirs != null) // at least one reservoir was added
+			if (!this.pipes.isEmpty()) // at least one reservoir was added
 			{
-				this.source.setNext(this.reservoirs.get(0));
-				for (int i = 1; i < this.reservoirs.size(); ++i)
+				this.source.setNext(this.pipes.get(0));
+				for (int i = 1; i < this.pipes.size(); ++i)
 				{
-					this.reservoirs.get(i - 1).setNext(this.reservoirs.get(i));
+					this.pipes.get(i - 1).setNext(this.pipes.get(i));
 				}
-				this.reservoirs.get(this.reservoirs.size() - 1).setNext(multiSink);
+				this.pipes.get(this.pipes.size() - 1).setNext(multiSink);
 			}
 			else
 			{
 				this.source.setNext(multiSink);
 			}
-			return new Flow<>(this.source, this.reservoirs, multiSink, filters, null);
+			return new Flow<>(this.source, this.pipes, multiSink);
 		}
 
-		public Plumber<E> filter(Predicate<E> predicate)
+		private void init(Source source, List<Sink> sinks)
 		{
-			if (this.filters == null)
-			{
-				this.filters = new ArrayList<>();
-			}
-			this.filters.add(predicate);
-			return this;
+			this.source = source;
+			this.pipes = new ArrayList<>();
+			this.sinks = Optional.ofNullable(sinks).orElse(new ArrayList<>());
 		}
 	}
 }

@@ -5,7 +5,18 @@ package flow.plumber;
  * @since 13-Sep-15.
  */
 @FunctionalInterface
-public interface FlowObject
+public interface FlowObject extends AutoCloseable
 {
 	void pump(Object... data);
+
+	default void start()
+	{
+		// do nothing
+	}
+
+	@Override
+	default void close()
+	{
+		// do nothing
+	}
 }
