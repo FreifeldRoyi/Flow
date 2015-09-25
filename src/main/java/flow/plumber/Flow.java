@@ -9,13 +9,13 @@ import java.util.Optional;
  * @author Freifeld Royi
  * @since 12-Sep-15.
  */
-public class Flow<T> implements AutoCloseable
+public class Flow<T, R> implements AutoCloseable
 {
-	private final Source source;
+	private final Source<T> source;
 	private final List<DecoratedFlowObject> pipes;
-	private final MultiSink sinks;
+	private final MultiSink<R> sinks;
 
-	private Flow(Source source, List<DecoratedFlowObject> pipes, MultiSink multiSink)
+	private Flow(Source<T> source, List<DecoratedFlowObject> pipes, MultiSink<R> multiSink)
 	{
 		this.source = source;
 		this.pipes = pipes;
@@ -37,10 +37,10 @@ public class Flow<T> implements AutoCloseable
 		this.sinks.close();
 	}
 
-	public static class Plumber<E>
+	public static class Plumber<T, R>
 	{
-		private Source source;
-		private List<Sink> sinks;
+		private Source<T> source;
+		private List<Sink<R>> sinks;
 		private List<DecoratedFlowObject> pipes;
 
 		public Plumber()
@@ -48,31 +48,43 @@ public class Flow<T> implements AutoCloseable
 			this.init(null, null);
 		}
 
-		public Plumber(Source source, Sink... sinks)
+		public Plumber(Source<T> source, List<Sink<R>> sinks)
 		{
-			List<Sink> sinkList = Arrays.asList(sinks);
-			this.init(source, sinkList);
+			this.init(source, sinks);
 		}
 
-		public Plumber<E> from(Source source)
+		public Plumber(Source<T> source, Sink<R> sink)
+		{
+			this.init(source, Arrays.asList(sink));
+		}
+
+		public Plumber<T, R> from(Source<T> source)
 		{
 			this.source = source;
 			return this;
 		}
 
-		public Plumber<E> to(Sink output)
+		public Plumber<T, R> to(Sink<R> output)
 		{
 			this.sinks.add(output);
 			return this;
 		}
 
-		public Plumber<E> pipe(DecoratedFlowObject pipe)
+		/**
+		 * Add a pipe to the flow.
+		 * Note that the type is raw. Type safety is left for the user
+		 *
+		 * @param pipe - a pipe
+		 * @return this
+		 */
+		@SuppressWarnings("raw")
+		public Plumber<T, R> pipe(DecoratedFlowObject pipe)
 		{
 			this.pipes.add(pipe);
 			return this;
 		}
 
-		public Flow<E> build()
+		public Flow<T, R> build()
 		{
 			if (this.source == null)
 			{
@@ -83,7 +95,7 @@ public class Flow<T> implements AutoCloseable
 				throw new IllegalStateException("Cannot build a Flow without at least one Sink");
 			}
 
-			MultiSink multiSink = new MultiSink(this.sinks);
+			MultiSink<R> multiSink = new MultiSink<>(this.sinks);
 			if (!this.pipes.isEmpty()) // at least one reservoir was added
 			{
 				this.source.setNext(this.pipes.get(0));
@@ -100,7 +112,7 @@ public class Flow<T> implements AutoCloseable
 			return new Flow<>(this.source, this.pipes, multiSink);
 		}
 
-		private void init(Source source, List<Sink> sinks)
+		private void init(Source<T> source, List<Sink<R>> sinks)
 		{
 			this.source = source;
 			this.pipes = new ArrayList<>();

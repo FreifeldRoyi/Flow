@@ -4,7 +4,9 @@ import flow.plumber.implementations.sinks.ReturnSink;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Freifeld Royi
@@ -12,36 +14,36 @@ import java.util.Arrays;
  */
 public class FlowTest
 {
-	private static final String[] SIMPLE_DATA =
-			{ "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
-					"r", "s", "t", "u", "v", "w", "x", "y", "z" };
-	private static final Source SIMPLE_SOURCE = new Source()
+	private static final List<String> SIMPLE_DATA =
+			Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o",
+						  "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z");
+	private static final Source<String> SIMPLE_SOURCE = new Source<String>()
 	{
 		@Override
-		public void pump(Object... data)
+		public void pump(String name, List<String> data)
 		{
-			this.next.pump(data);
+			this.next.pump(name, data);
 		}
 
 		@Override
 		public void start()
 		{
-			this.pump(SIMPLE_DATA);
+			this.pump("*", SIMPLE_DATA);
 		}
 	};
 
-	private static final Source SIMPLE_EMPTY_SOURCE = new Source()
+	private static final Source<String> SIMPLE_EMPTY_SOURCE = new Source<String>()
 	{
 		@Override
-		public void pump(Object... data)
+		public void pump(String name, List<String> data)
 		{
-			this.next.pump(data);
+			this.next.pump(name, data);
 		}
 
 		@Override
 		public void start()
 		{
-			this.pump(new String[0]);
+			this.pump("*", new ArrayList<>());
 		}
 	};
 
@@ -50,17 +52,18 @@ public class FlowTest
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
 
-		Flow<String> flow = new Flow.Plumber<String>().from(SIMPLE_SOURCE).to(retSink).build();
+		Flow<String, String> flow =
+				new Flow.Plumber<String, String>().from(SIMPLE_SOURCE).to(retSink).build();
 		flow.start();
 
 		// Test that all data passed
-		String[] stuff = retSink.getStuff();
-		Assert.assertTrue(stuff.length == SIMPLE_DATA.length);
+		List<String> stuff = retSink.getStuff();
+		Assert.assertTrue(stuff.size() == SIMPLE_DATA.size());
 
 		// Test that the data is in order
-		for (int i = 0; i < stuff.length; ++i)
+		for (int i = 0; i < stuff.size(); ++i)
 		{
-			Assert.assertTrue(stuff[i].equals(SIMPLE_DATA[i]));
+			Assert.assertTrue(stuff.get(i).equals(SIMPLE_DATA.get(i)));
 		}
 
 		//		Assert.assertTrue(stuff.containsAll(Arrays.asList(SIMPLE_DATA)));
@@ -72,29 +75,47 @@ public class FlowTest
 	public void plumber_buildTestWithPipes()
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
-		Flow.Plumber<String> plumber = new Flow.Plumber<>(SIMPLE_EMPTY_SOURCE, retSink);
+		Flow.Plumber<String, String> plumber = new Flow.Plumber<>(SIMPLE_EMPTY_SOURCE, retSink);
 
 		for (String str : SIMPLE_DATA)
 		{
-			plumber.pipe(new DecoratedFlowObject()
+			plumber.pipe(new DecoratedFlowObject<String>()
 			{
 				@Override
-				public void pump(Object... data)
+				public void pump(String name, List<String> data)
 				{
-					String[] nextArray = Arrays.copyOf(((String[]) data), data.length + 1);
-					nextArray[data.length] = str;
-					this.next.pump(nextArray);
+					data.add(str);
+					this.next.pump(name, data);
 				}
 			});
 		}
 
-		Flow<String> flow = plumber.build();
+		Flow<String, String> flow = plumber.build();
 		flow.start();
 
 		// Test order of pipes
 		String concatString = String.join("", retSink.getStuff());
 		String concatSimpleData = String.join("", SIMPLE_DATA);
 		Assert.assertEquals(concatString, concatSimpleData);
+		flow.close();
+	}
+
+	@Test(groups = { "plumber" })
+	public void plumber_buildTestMultipleSinks()
+	{
+		ReturnSink<String> returnSink1 = new ReturnSink<>();
+		ReturnSink<String> returnSink2 = new ReturnSink<>();
+
+		Flow<String, String> flow =
+				new Flow.Plumber<>(SIMPLE_SOURCE, Arrays.asList(returnSink1, returnSink2)).build();
+		flow.start();
+
+		List<String> returnSink1Stuff = returnSink1.getStuff();
+		List<String> returnSink2Stuff = returnSink2.getStuff();
+
+		String joinedSink1Stuff = String.join("", returnSink1Stuff);
+		String joinedSink2Stuff = String.join("", returnSink2Stuff);
+		Assert.assertEquals(joinedSink1Stuff, joinedSink2Stuff);
 		flow.close();
 	}
 
@@ -106,10 +127,10 @@ public class FlowTest
 		 * 	the exception to be thrown
 		 * 2. Note that the type of the Sink isn't relevant
 		 */
-		new Flow.Plumber<String>().to(new Sink()
+		new Flow.Plumber<String, String>().to(new Sink<String>()
 		{
 			@Override
-			public void pump(Object... data)
+			public void pump(String name, List<String> data)
 			{
 				// do nothing
 			}
@@ -124,10 +145,10 @@ public class FlowTest
 		 * 	the exception to be thrown
 		 * 2. Note that the type of the Source isn't relevant
 		 */
-		new Flow.Plumber<String>().from(new Source()
+		new Flow.Plumber<String, String>().from(new Source<String>()
 		{
 			@Override
-			public void pump(Object... data)
+			public void pump(String name, List<String> data)
 			{
 				// do nothing
 			}

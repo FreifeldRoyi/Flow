@@ -4,7 +4,7 @@ package flow.plumber;
  * @author Freifeld Royi
  * @since 13-Sep-15.
  */
-public abstract class Sink implements FlowObject
+public abstract class Sink<T> implements FlowObject<T>
 {
 	private final String name;
 

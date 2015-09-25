@@ -4,8 +4,9 @@ package flow.plumber;
  * @author Freifeld Royi
  * @since 13-Sep-15.
  */
-public abstract class DecoratedFlowObject implements FlowObject
+public abstract class DecoratedFlowObject<T> implements FlowObject<T>
 {
+	@SuppressWarnings("unchecked")
 	protected FlowObject next;
 
 	public DecoratedFlowObject()
