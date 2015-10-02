@@ -1,6 +1,6 @@
 package flow.plumber;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Freifeld Royi
@@ -9,7 +9,7 @@ import java.util.List;
 @FunctionalInterface
 public interface FlowObject<T> extends AutoCloseable
 {
-	void pump(String name, List<T> data);
+	void pump(String name, Collection<T> data);
 
 	default void start()
 	{

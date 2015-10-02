@@ -3,6 +3,7 @@ package flow.plumber.implementations.pipes;
 import flow.plumber.DecoratedFlowObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,11 +36,11 @@ public final class FilteringPipe<T> extends DecoratedFlowObject<T>
 	}
 
 	@Override
-	public void pump(String name, List<T> data)
+	public void pump(String name, Collection<T> data)
 	{
 		List<T> collected =
 				data.parallelStream().filter(this.accumulatedFilter).collect(Collectors.toList());
-		this.next.pump(name, collected);
+		this.nextFlow(name, collected);
 	}
 
 	private void init(List<Predicate<T>> filters)

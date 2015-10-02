@@ -2,6 +2,8 @@ package flow.plumber.implementations.sinks;
 
 import flow.plumber.Sink;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,9 +21,9 @@ public class ReturnSink<T> extends Sink<T>
 	}
 
 	@Override
-	public void pump(String name, List<T> data)
+	public void pump(String name, Collection<T> data)
 	{
-		this.stuff = data;
+		this.stuff = new ArrayList<>(data);
 	}
 
 	public List<T> getStuff()

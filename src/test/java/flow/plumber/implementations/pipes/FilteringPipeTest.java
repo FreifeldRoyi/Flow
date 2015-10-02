@@ -43,8 +43,6 @@ public class FilteringPipeTest
 		this.filterStringReservoir.addFilter(this.dividedByThree);
 		this.filterStringReservoir.pump("*", testedStringData);
 
-		System.out.println(this.stringData.size());
-
 		Assert.assertTrue(this.stringData.size() < MAX_NUMBER_TO_GENERATE / 2);
 	}
 

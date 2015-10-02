@@ -1,5 +1,6 @@
 package flow.plumber;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public final class MultiSink<T> extends Sink<T>
 	}
 
 	@Override
-	public void pump(String name, List<T> data)
+	public void pump(String name, Collection<T> data)
 	{
 		List<Sink<T>> toSend = this.sinks.get(name);
 		Objects.requireNonNull(toSend, "No Sinks with name " + name);
