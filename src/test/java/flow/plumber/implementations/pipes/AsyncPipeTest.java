@@ -4,15 +4,19 @@ import flow.plumber.DecoratedFlowObject;
 import flow.plumber.Flow;
 import flow.plumber.Source;
 import flow.plumber.implementations.sinks.ReturnSink;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,6 +26,9 @@ import java.util.stream.IntStream;
  */
 public class AsyncPipeTest
 {
+	private final static int DEFAULT_COUNT_OUT_COUNTER = 50;
+	private final static int ASYNC_EQUAL_COUNT_THRESHOLD = 5;
+
 	private final static int MAX_VALUE = 30;
 	private final static int THRESHOLD = 20;
 
@@ -33,7 +40,7 @@ public class AsyncPipeTest
 	@BeforeClass
 	public void setup()
 	{
-		this.syncFlowReturnSink = new ReturnSink<>();
+		this.syncFlowReturnSink = new ReturnSink<>(Long::compare, false, false);
 		this.syncFlow = new Flow.Plumber<>(new Source<Integer>()
 		{
 			@Override
@@ -50,7 +57,7 @@ public class AsyncPipeTest
 			}
 		}).build();
 
-		this.asyncFlowReturnSink = new ReturnSink<>();
+		this.asyncFlowReturnSink = new ReturnSink<>(Long::compare, true, true);
 		this.asyncFlow = new Flow.Plumber<>(new Source<Integer>()
 		{
 			@Override
@@ -64,17 +71,39 @@ public class AsyncPipeTest
 	@Test
 	public void dummyTest()
 	{
-		long start = System.currentTimeMillis();
 		this.syncFlow.start();
-		long end = System.currentTimeMillis();
-		List<Long> syncStuff = this.syncFlowReturnSink.getStuff();
-		System.out.println(syncStuff);
-		System.out.println((end - start) / 1000.0);
-
 		this.asyncFlow.start();
-		System.out.println("\n\n\n\n\n\n\n");
-		System.out.println(this.asyncFlowReturnSink.getStuff());
+		asyncEqualTester(this.syncFlowReturnSink::getStuff, this.asyncFlowReturnSink::getStuff, (longs1, longs2) -> {
+			List<Long> list1ShouldBeEmpty = new ArrayList<>(longs1);
+			List<Long> list2ShouldBeEmpty = new ArrayList<>(longs2);
+			longs1.forEach(list2ShouldBeEmpty::remove);
+			longs2.forEach(list1ShouldBeEmpty::remove);
+			return list2ShouldBeEmpty.isEmpty() && list1ShouldBeEmpty.isEmpty();
+		});
 		this.asyncFlow.close();
+		this.syncFlow.close();
+	}
+
+	private static <T> void asyncEqualTester(Supplier<T> supplier1, Supplier<T> supplier2, BiPredicate<T, T> predicate)
+	{
+		int testingCounter = 0, countOutCounter = 0;
+
+		while (testingCounter < ASYNC_EQUAL_COUNT_THRESHOLD && countOutCounter < DEFAULT_COUNT_OUT_COUNTER)
+		{
+			T obj1 = supplier1.get();
+			T obj2 = supplier2.get();
+			if (predicate.test(obj1, obj2))
+			{
+				++testingCounter;
+			}
+			else
+			{
+				testingCounter = 0;
+			}
+			++countOutCounter;
+		}
+
+		Assert.assertTrue(testingCounter >= ASYNC_EQUAL_COUNT_THRESHOLD);
 	}
 
 	private static long fibonacci(int n)
@@ -99,14 +128,7 @@ public class AsyncPipeTest
 		@Override
 		protected BiFunction<String, Collection<Integer>, List<RecursiveTask<Long>>> createTaskProducer()
 		{
-			return (s, intList) -> {
-				System.out.println(intList);
-
-				return intList.stream().map(n -> new FibonacciTask(n, s, (s1, longs) -> {
-					System.out.println(longs);
-					nextFlow(s1, longs);
-				})).collect(Collectors.toList());
-			};
+			return (s, intList) -> intList.stream().map(n -> new FibonacciTask(n, s, this::nextFlow)).collect(Collectors.toList());
 		}
 	}
 
@@ -124,7 +146,7 @@ public class AsyncPipeTest
 
 		public FibonacciTask(int starterFibNumber, String name)
 		{
-			this.init(starterFibNumber, name, (s1, longs1) -> {});
+			this.init(starterFibNumber, name, null);
 		}
 
 		@Override
@@ -157,7 +179,10 @@ public class AsyncPipeTest
 
 		private void onCompletion(Long result)
 		{
-			this.onCompleteFunction.accept(this.name, Arrays.asList(result));
+			if (this.onCompleteFunction != null)
+			{
+				this.onCompleteFunction.accept(this.name, Collections.singletonList(result));
+			}
 		}
 	}
 }
