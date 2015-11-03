@@ -5,16 +5,16 @@ import flow.utilities.CachedThreadsPoolFactory;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 
 /**
  * @author Freifeld Royi
  * @since 25-Sep-15.
  */
-public abstract class AsyncPipe<T, E> extends DecoratedFlowObject<T>
+public abstract class AsyncPipe<T, E, F extends Future<E>> extends DecoratedFlowObject<T>
 {
-	private BiFunction<String, Collection<T>, List<RecursiveTask<E>>> taskProducer;
+	private BiFunction<String, Collection<T>, List<F>> taskProducer;
 
 	public AsyncPipe()
 	{
@@ -25,12 +25,8 @@ public abstract class AsyncPipe<T, E> extends DecoratedFlowObject<T>
 	@Override
 	public void pump(String name, Collection<T> data)
 	{
-		List<RecursiveTask<E>> tasks = this.taskProducer.apply(name, data);
-		for (RecursiveTask<E> task : tasks)
-		{
-			// Note that there is no need to save the ForkJoinTask that is returned since 'task' is returned
-			CachedThreadsPoolFactory.getInstance().getForkJoinPool().submit(task);
-		}
+		this.thenApply(this.taskProducer.apply(name, data));
+
 	}
 
 	@Override
@@ -46,5 +42,10 @@ public abstract class AsyncPipe<T, E> extends DecoratedFlowObject<T>
 		CachedThreadsPoolFactory.getInstance().close();
 	}
 
-	protected abstract BiFunction<String, Collection<T>, List<RecursiveTask<E>>> createTaskProducer();
+	protected abstract BiFunction<String, Collection<T>, List<F>> createTaskProducer();
+
+	protected void thenApply(List<F> tasks)
+	{
+		// Default implementation to do nothing
+	}
 }

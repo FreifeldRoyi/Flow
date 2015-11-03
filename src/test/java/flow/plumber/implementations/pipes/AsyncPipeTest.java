@@ -118,7 +118,7 @@ public class AsyncPipeTest
 		}
 	}
 
-	private static class FibonacciAsyncPipe extends AsyncPipe<Integer, Long>
+	private static class FibonacciAsyncPipe extends AsyncPipe<Integer, Long, FibonacciTask>
 	{
 		public FibonacciAsyncPipe()
 		{
@@ -126,7 +126,7 @@ public class AsyncPipeTest
 		}
 
 		@Override
-		protected BiFunction<String, Collection<Integer>, List<RecursiveTask<Long>>> createTaskProducer()
+		protected BiFunction<String, Collection<Integer>, List<FibonacciTask>> createTaskProducer()
 		{
 			return (s, intList) -> intList.stream().map(n -> new FibonacciTask(n, s, this::nextFlow)).collect(Collectors.toList());
 		}
