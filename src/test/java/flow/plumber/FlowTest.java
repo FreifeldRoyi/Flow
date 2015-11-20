@@ -22,12 +22,6 @@ public class FlowTest
 	private static final Source<String> SIMPLE_SOURCE = new Source<String>()
 	{
 		@Override
-		public void pump(String name, Collection<String> data)
-		{
-			this.nextFlow(name, data);
-		}
-
-		@Override
 		public void start()
 		{
 			this.pump("*", SIMPLE_DATA);
@@ -36,12 +30,6 @@ public class FlowTest
 
 	private static final Source<String> SIMPLE_EMPTY_SOURCE = new Source<String>()
 	{
-		@Override
-		public void pump(String name, Collection<String> data)
-		{
-			this.nextFlow(name, data);
-		}
-
 		@Override
 		public void start()
 		{

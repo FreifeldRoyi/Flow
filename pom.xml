@@ -50,5 +50,11 @@
             <artifactId>testng</artifactId>
             <version>${version.testng}</version>
         </dependency>
+
+        <dependency>
+            <groupId>microsoft.aspnet.signalr</groupId>
+            <artifactId>SignalR-Java-Client</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>
