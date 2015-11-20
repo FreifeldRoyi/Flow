@@ -1,51 +1,32 @@
 package flow.plumber.implementations.pipes;
 
 import flow.plumber.DecoratedFlowObject;
-import flow.utilities.CachedThreadsPoolFactory;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.function.BiFunction;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author Freifeld Royi
  * @since 25-Sep-15.
  */
-public abstract class AsyncPipe<T, E, F extends Future<E>> extends DecoratedFlowObject<T>
+public abstract class AsyncPipe<T, R> extends DecoratedFlowObject<T>
 {
-	private BiFunction<String, Collection<T>, List<F>> taskProducer;
-
 	public AsyncPipe()
 	{
 		super();
-		this.taskProducer = this.createTaskProducer();
 	}
 
 	@Override
 	public void pump(String name, Collection<T> data)
 	{
-		this.thenApply(this.taskProducer.apply(name, data));
+		List<CompletableFuture<R>> collect = data.stream().map(t -> CompletableFuture.supplyAsync(() -> apply(t))).collect(Collectors.toList());
 
+		// Thanks http://www.nurkiewicz.com/2013/05/java-8-completablefuture-in-action.html?q=completablefuture
+		CompletableFuture<Void> future = CompletableFuture.allOf(collect.toArray(new CompletableFuture[collect.size()]));
+		future.thenAcceptAsync(v -> this.nextFlow(name, collect.stream().map(CompletableFuture::join).collect(Collectors.toList())));
 	}
 
-	@Override
-	public void start()
-	{
-		// Init the ForkJoinPool
-		CachedThreadsPoolFactory.getInstance().getForkJoinPool();
-	}
-
-	@Override
-	public void close()
-	{
-		CachedThreadsPoolFactory.getInstance().close();
-	}
-
-	protected abstract BiFunction<String, Collection<T>, List<F>> createTaskProducer();
-
-	protected void thenApply(List<F> tasks)
-	{
-		// Default implementation to do nothing
-	}
+	protected abstract R apply(T data);
 }
