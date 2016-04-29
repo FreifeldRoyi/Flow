@@ -44,7 +44,7 @@ public final class FilteringPipe<T> extends DecoratedFlowObject<T>
 
 	private void init(List<Predicate<T>> filters)
 	{
-		this.accumulatedFilter = filters.stream().reduce((p1, p2) -> p1.and(p2)).orElse(x -> true);
+		this.accumulatedFilter = filters.stream().reduce(Predicate::and).orElse(x -> true);
 		this.filters = filters;
 	}
 }
