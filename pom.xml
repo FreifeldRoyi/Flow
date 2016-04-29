@@ -6,18 +6,19 @@
 
     <groupId>freifeld</groupId>
     <artifactId>flow</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>Flow-core</module>
+        <module>Flow-extras</module>
+    </modules>
 
     <properties>
-        <!-- plugin dependencies -->
-        <version.maven.compiler>3.5.1</version.maven.compiler>
-
-        <!-- general dependencies -->
-        <version.gson>2.6.2</version.gson>
-        <version.activemq-artemis>1.2.0</version.activemq-artemis>
-
         <!-- other stuff -->
         <version.java>1.8</version.java>
+
+        <!-- plugin dependencies -->
+        <version.maven.compiler>3.5.1</version.maven.compiler>
 
         <!-- testing dependencies -->
         <version.testng>6.9.10</version.testng>
@@ -25,38 +26,29 @@
     </properties>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.maven.compiler}</version>
-                <configuration>
-                    <source>${version.java}</source>
-                    <target>${version.java}</target>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.maven.compiler}</version>
+                    <configuration>
+                        <source>${version.java}</source>
+                        <target>${version.java}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
-    <dependencies>
-        <!-- lib dependencies -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${version.gson}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-client</artifactId>
-            <version>${version.activemq-artemis}</version>
-        </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${version.testng}</version>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- test dependencies -->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${version.testng}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

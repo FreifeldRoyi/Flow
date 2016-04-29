@@ -2,6 +2,8 @@ package flow.plumber.implementations.sinks;
 
 import flow.plumber.Sink;
 
+import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
 import java.util.Collection;
 
 /**
@@ -10,9 +12,8 @@ import java.util.Collection;
  */
 public class JMSSink<T> extends Sink<T>
 {
-	public JMSSink()
-	{
-	}
+	@Inject
+	private ConnectionFactory factory;
 
 	public JMSSink(String name)
 	{

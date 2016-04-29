@@ -37,7 +37,7 @@ public class FlowTest
 		}
 	};
 
-	@Test(groups = { "plumber" })
+	@Test
 	public void plumberBuild_noPipes()
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
@@ -58,7 +58,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" })
+	@Test
 	public void plumberBuild_sameOutputPipes()
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
@@ -85,7 +85,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" })
+	@Test
 	public void plumberBuild_differentMatchingOutputPipes()
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
@@ -111,7 +111,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" }, expectedExceptions = { ClassCastException.class })
+	@Test(expectedExceptions = { ClassCastException.class })
 	public void plumberBuild_differentNoMatchOutputPipes()
 	{
 		ReturnSink<String> retSink = new ReturnSink<>();
@@ -136,7 +136,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" })
+	@Test
 	public void plumberBuild_multipleSinks()
 	{
 		ReturnSink<String> returnSink1 = new ReturnSink<>();
@@ -149,7 +149,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" }, expectedExceptions = { IllegalStateException.class })
+	@Test(expectedExceptions = { IllegalStateException.class })
 	public void plumberBuild_noSource()
 	{
 		/*
@@ -170,7 +170,7 @@ public class FlowTest
 		}
 	}
 
-	@Test(groups = { "plumber" }, expectedExceptions = { IllegalStateException.class })
+	@Test(expectedExceptions = { IllegalStateException.class })
 	public void plumberBuild_noSink()
 	{
 		/*
