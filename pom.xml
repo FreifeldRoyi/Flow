@@ -10,16 +10,18 @@
 
     <properties>
         <!-- plugin dependencies -->
-        <version.maven.compiler>3.3</version.maven.compiler>
+        <version.maven.compiler>3.5.1</version.maven.compiler>
 
         <!-- general dependencies -->
-        <version.gson>2.3.1</version.gson>
-
-        <!-- testing dependencies -->
-        <version.testng>6.9.6</version.testng>
+        <version.gson>2.6.2</version.gson>
+        <version.activemq-artemis>1.2.0</version.activemq-artemis>
 
         <!-- other stuff -->
         <version.java>1.8</version.java>
+
+        <!-- testing dependencies -->
+        <version.testng>6.9.10</version.testng>
+
     </properties>
 
     <build>
@@ -44,17 +46,17 @@
             <version>${version.gson}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-client</artifactId>
+            <version>${version.activemq-artemis}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${version.testng}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>microsoft.aspnet.signalr</groupId>
-            <artifactId>SignalR-Java-Client</artifactId>
-            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

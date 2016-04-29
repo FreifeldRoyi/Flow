@@ -1,6 +1,6 @@
 package flow.plumber.implementations.pipes;
 
-import junit.framework.Assert;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ public class FilteringPipeTest
 	public void testPumpOneFilter() throws Exception
 	{
 		this.filterStringReservoir.addFilter(this.dividedByTwo);
-		this.filterStringReservoir.pump("*", testedStringData);
+		this.filterStringReservoir.pump("*", this.testedStringData);
 
 		Assert.assertTrue(this.stringData.size() < MAX_NUMBER_TO_GENERATE);
 	}
@@ -41,7 +41,7 @@ public class FilteringPipeTest
 	{
 		this.filterStringReservoir.addFilter(this.dividedByTwo);
 		this.filterStringReservoir.addFilter(this.dividedByThree);
-		this.filterStringReservoir.pump("*", testedStringData);
+		this.filterStringReservoir.pump("*", this.testedStringData);
 
 		Assert.assertTrue(this.stringData.size() < MAX_NUMBER_TO_GENERATE / 2);
 	}

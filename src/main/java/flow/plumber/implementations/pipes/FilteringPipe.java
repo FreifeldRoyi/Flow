@@ -38,8 +38,7 @@ public final class FilteringPipe<T> extends DecoratedFlowObject<T>
 	@Override
 	public void pump(String name, Collection<T> data)
 	{
-		List<T> collected =
-				data.parallelStream().filter(this.accumulatedFilter).collect(Collectors.toList());
+		List<T> collected = data.parallelStream().filter(this.accumulatedFilter).collect(Collectors.toList());
 		this.nextFlow(name, collected);
 	}
 

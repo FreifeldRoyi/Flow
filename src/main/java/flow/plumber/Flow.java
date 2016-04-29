@@ -1,7 +1,7 @@
 package flow.plumber;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +55,7 @@ public class Flow<T, R> implements AutoCloseable
 
 		public Plumber(Source<T> source, Sink<R> sink)
 		{
-			this.init(source, Arrays.asList(sink));
+			this.init(source, Collections.singletonList(sink));
 		}
 
 		public Plumber<T, R> from(Source<T> source)
@@ -75,6 +75,7 @@ public class Flow<T, R> implements AutoCloseable
 		 * Note that the type is raw. Type safety is left for the user
 		 *
 		 * @param pipe - a pipe
+		 *
 		 * @return this
 		 */
 		@SuppressWarnings("raw")
