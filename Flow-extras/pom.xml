@@ -14,7 +14,6 @@
 
     <properties>
         <!-- libraries version -->
-        <version.guice>4.0</version.guice>
         <version.gson>2.6.2</version.gson>
         <version.activemq-artemis>1.2.0</version.activemq-artemis>
     </properties>
@@ -39,7 +38,6 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>${version.guice}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

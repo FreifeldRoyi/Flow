@@ -18,6 +18,10 @@
         <version.java>1.8</version.java>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- libraries version -->
+        <version.guice>4.0</version.guice>
+        <version.javax.inject>1</version.javax.inject>
+
         <!-- plugin dependencies -->
         <version.maven.compiler>3.5.1</version.maven.compiler>
 
@@ -44,6 +48,19 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- libraries dependencies -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${version.guice}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${version.javax.inject}</version>
+            </dependency>
+
             <!-- test dependencies -->
             <dependency>
                 <groupId>org.testng</groupId>

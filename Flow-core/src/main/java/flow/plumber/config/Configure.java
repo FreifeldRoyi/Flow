@@ -44,11 +44,6 @@ public class Configure
 		}
 	}
 
-	public Configure(String defaultsFile)
-	{
-		this("", defaultsFile);
-	}
-
 	public String getProperty(String propertyName)
 	{
 		return this.properties.getProperty(propertyName);

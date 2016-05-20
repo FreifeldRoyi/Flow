@@ -8,16 +8,24 @@ import java.util.Collection;
 
 /**
  * @author royif
- * @since 29/04/16.
+ * @since 29/04/16
  */
 public class JMSSink<T> extends Sink<T>
 {
-	@Inject
 	private ConnectionFactory factory;
 
-	public JMSSink(String name)
+	@Inject
+	public JMSSink(ConnectionFactory factory)
+	{
+		super();
+		this.factory = factory;
+	}
+
+	//TODO allow injections for named elements
+	public JMSSink(String name, ConnectionFactory factory)
 	{
 		super(name);
+		this.factory = factory;
 	}
 
 	@Override

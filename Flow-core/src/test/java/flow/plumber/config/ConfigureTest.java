@@ -15,7 +15,7 @@ public class ConfigureTest
 	@BeforeClass
 	public void setup()
 	{
-		this.configure = new Configure("configTest.properties","configDefaultTest.properties");
+		this.configure = new Configure("configTest.properties", "configDefaultTest.properties");
 	}
 
 	@Test(groups = "docs",testName = "Null File Names", description = "Checks whether the constructor adheres to its doc of non-null params")
