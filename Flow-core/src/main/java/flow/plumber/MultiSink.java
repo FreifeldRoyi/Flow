@@ -16,7 +16,12 @@ public final class MultiSink<T> extends Sink<T>
 
 	public MultiSink(List<? extends Sink<T>> sinks)
 	{
-		super("*");
+		this("*", sinks);
+	}
+
+	public MultiSink(String name, List<? extends Sink<T>> sinks)
+	{
+		super(name);
 		this.sinks = sinks.stream().collect(Collectors.groupingByConcurrent(Sink::getName));
 	}
 

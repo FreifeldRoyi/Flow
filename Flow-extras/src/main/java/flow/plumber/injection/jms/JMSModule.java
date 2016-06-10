@@ -1,41 +1,42 @@
 package flow.plumber.injection.jms;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import flow.plumber.injections.FlowAbstractModule;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Properties;
 
 /**
  * @author royif
  * @since 06/05/16.
  */
-public class JMSModule extends AbstractModule
+public class JMSModule extends FlowAbstractModule
 {
-	@Override
-	protected void configure()
-	{
-		//		bind(String.class).annotatedWith(Qualifiers.namedFlowElement(JMSSink.class,));
-		//		bindConstant().annotatedWith(Names.named("sink/name.default"))
-	}
+	private InitialContext context;
 
-	@Provides
-	private ConnectionFactory provideConnectionFactory()
+	public JMSModule()
 	{
-		ConnectionFactory factory = null;
 		try
 		{
-			Properties env = new Properties();
-			InitialContext context = new InitialContext(env);
-			factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+			this.context = new InitialContext();
 		}
 		catch (NamingException e)
 		{
-			throw new IllegalStateException(e);
+			throw new RuntimeException(e);
 		}
+	}
 
-		return factory;
+	@Provides
+	private ConnectionFactory provideConnectionFactory() throws NamingException
+	{
+		return (ConnectionFactory) this.context.lookup("ConnectionFactory");
+	}
+
+	@Provides
+	private Topic provideTopic() throws NamingException
+	{
+		return (Topic) this.context.lookup("topics/topic");
 	}
 }

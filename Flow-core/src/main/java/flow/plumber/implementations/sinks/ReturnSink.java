@@ -2,6 +2,7 @@ package flow.plumber.implementations.sinks;
 
 import flow.plumber.Sink;
 
+import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -21,16 +22,21 @@ public class ReturnSink<T> extends Sink<T>
 
 	public ReturnSink()
 	{
-		super();
+		this("*");
+	}
+
+	public ReturnSink(String name)
+	{
+		super(name);
 		this.stuff = null;
 		this.comparator = null;
 		this.accumulating = false;
 		this.async = false;
 	}
 
-	public ReturnSink(Comparator<T> comparator, boolean accumulating, boolean async)
+	public ReturnSink(String name, Comparator<T> comparator, boolean accumulating, boolean async)
 	{
-		super();
+		super(name);
 		this.comparator = comparator;
 		this.accumulating = accumulating;
 		this.async = async;
