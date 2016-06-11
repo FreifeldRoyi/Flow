@@ -1,6 +1,8 @@
 package flow.plumber.config;
 
-import java.io.FileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -11,6 +13,7 @@ import java.util.Properties;
  */
 public class Configure
 {
+	private static final Logger logger = LoggerFactory.getLogger(Configure.class);
 	private Properties properties;
 
 	/**
@@ -21,6 +24,7 @@ public class Configure
 	 */
 	public Configure(String filename, String defaultsFile)
 	{
+		logger.info("Configuring the system. Reading {} file using {} as default", filename, defaultsFile);
 		try (InputStream defaultsStream = getClass().getClassLoader().getResourceAsStream(defaultsFile);
 				InputStream propertiesStream = getClass().getClassLoader().getResourceAsStream(filename))
 		{
@@ -32,14 +36,9 @@ public class Configure
 				this.properties.load(propertiesStream);
 			}
 		}
-		catch (FileNotFoundException e)
-		{
-			//TODO log
-			throw new RuntimeException(e);
-		}
 		catch (IOException e)
 		{
-			//TODO log
+			logger.error("Exception", e);
 			throw new RuntimeException(e);
 		}
 	}
