@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout charset="UTF-8" pattern="%d{ISO8601}%d{Z} [%t] [%-5level] %logger{1.1.} - %msg%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="flow.plumber" level="info">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>

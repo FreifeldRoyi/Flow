@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>freifeld</groupId>
-    <artifactId>flow</artifactId>
+    <groupId>org.freifeld</groupId>
+    <artifactId>Flow</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
+
     <modules>
         <module>Flow-core</module>
-        <module>Flow-extras</module>
     </modules>
 
     <properties>
@@ -18,52 +18,22 @@
         <version.java>1.8</version.java>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- libraries version -->
-        <version.guice>4.0</version.guice>
-        <version.javax.inject>1</version.javax.inject>
-
         <!-- plugin dependencies -->
-        <version.maven.compiler>3.5.1</version.maven.compiler>
+        <version.maven.compiler>3.6.2</version.maven.compiler>
 
         <!-- testing dependencies -->
-        <version.testng>6.9.10</version.testng>
+        <version.testng>6.11</version.testng>
 
         <!-- logging dependency -->
-        <version.logging.slf4j>1.7.21</version.logging.slf4j>
-        <version.logging.log4j>2.6</version.logging.log4j>
-    </properties>
+        <version.logging.slf4j>1.7.25</version.logging.slf4j>
+        <version.logging.log4j>2.8.2</version.logging.log4j>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${version.maven.compiler}</version>
-                    <configuration>
-                        <source>${version.java}</source>
-                        <target>${version.java}</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- libraries dependencies -->
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${version.guice}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${version.javax.inject}</version>
-            </dependency>
-
             <!-- logging dependency -->
             <dependency>
                 <groupId>org.slf4j</groupId>

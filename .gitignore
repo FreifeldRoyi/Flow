@@ -5,8 +5,7 @@ hs_err_pid*
 # build dirs & files
 bin/
 target/
-*.class
 
-# IntelliJ fils
+# IntelliJ files
 .idea/
 *.iml
