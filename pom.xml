@@ -26,7 +26,7 @@
 
         <!-- logging dependency -->
         <version.logging.slf4j>1.7.25</version.logging.slf4j>
-        <version.logging.log4j>2.15.0</version.logging.log4j>
+        <version.logging.log4j>2.16.0</version.logging.log4j>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
