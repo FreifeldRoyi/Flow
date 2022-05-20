@@ -12,7 +12,7 @@
     <artifactId>Flow-core</artifactId>
 
     <properties>
-        <version.gson>2.8.1</version.gson>
+        <version.gson>2.8.9</version.gson>
     </properties>
 
 
