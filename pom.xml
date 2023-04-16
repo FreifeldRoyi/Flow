@@ -22,7 +22,7 @@
         <version.maven.compiler>3.6.2</version.maven.compiler>
 
         <!-- testing dependencies -->
-        <version.testng>6.11</version.testng>
+        <version.testng>7.7.0</version.testng>
 
         <!-- logging dependency -->
         <version.logging.slf4j>1.7.25</version.logging.slf4j>
